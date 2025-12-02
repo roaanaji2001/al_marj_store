@@ -1,42 +1,546 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>متجر المرج – منصة تجميع البائعين</title>
-    <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8">
+    <title>متجر المرج Almarj store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ********* الألوان والمتغيرات ********* */
+        :root {
+            --main-text-color: #000;
+            --accent-color: #FF1493; /* وردي فاقع للتركيز */
+            --bg-color: #ffffff;
+            --sidebar-bg: #f9f9f9; 
+            --border-color: #eee;
+        }
+
+        /* ********* التنسيقات الأساسية ********* */
+        body {
+            font-family: 'Tahoma', 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f7f7f7;
+            min-height: 100vh;
+        }
+
+        /* ********* شريط الرأس - الشعار والتوسيط ********* */
+        header {
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 60px;
+        }
+        
+        /* تصميم الشعار/اللوجو الجميل والمُوسَّط */
+        .store-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--main-text-color);
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+            margin: 0;
+            padding: 0;
+            cursor: pointer; /* للإشارة إلى أنه قابل للضغط */
+        }
+        .store-title span {
+            color: var(--accent-color); 
+        }
+
+        /* ********* زر السلة الدائري الثابت على اليسار ********* */
+        .fixed-cart-button {
+            position: fixed;
+            left: 20px;
+            bottom: 30px; 
+            background: var(--main-text-color);
+            color: white;
+            border: 3px solid var(--accent-color); 
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 150;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 11px;
+            line-height: 1;
+            font-weight: bold;
+        }
+
+        /* ********* هيكل الصفحة الرئيسي (Sidebar + Content) ********* */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr; 
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-color);
+            min-height: calc(100vh - 60px);
+        }
+        
+        /* ********* القائمة الجانبية (Sidebar) ********* */
+        .sidebar {
+            background: var(--sidebar-bg);
+            padding: 20px 15px;
+            border-left: 1px solid var(--border-color);
+            position: sticky; 
+            top: 60px; 
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+        }
+
+        .sidebar h4 {
+            font-size: 18px;
+            color: var(--main-text-color);
+            margin-top: 25px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--accent-color);
+            font-weight: bold;
+        }
+
+        .sidebar-links a {
+            display: block;
+            color: #555;
+            text-decoration: none;
+            padding: 8px 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .sidebar-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        .sidebar input[type="search"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            text-align: right;
+        }
+
+        /* ********* منطقة المحتوى الرئيسية ********* */
+        .content-area {
+            padding: 20px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        
+        /* ********* بطاقة المنتج (أنيقة وواضحة) ********* */
+        .product {
+            background: var(--bg-color);
+            border: none; 
+            padding: 0;
+            border-radius: 6px;
+            text-align: right;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            cursor: pointer; /* جعل البطاقة قابلة للضغط */
+        }
+        
+        .product:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+        }
+
+        .product img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            pointer-events: none; /* لمنع تداخل الحدث مع البطاقة */
+        }
+
+        .product-details {
+            padding: 10px 15px;
+        }
+
+        .product h3 {
+            font-size: 15px;
+            margin: 5px 0 0;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .product small {
+            display: block;
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .product p {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .product button {
+            padding: 10px;
+            background: var(--main-text-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 5px;
+            transition: background 0.2s;
+        }
+
+        .product button:hover {
+            background: var(--accent-color);
+        }
+
+        /* ********* شاشة تفاصيل المنتج الجديدة (Modal) ********* */
+        #product-detail-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .detail-content {
+            background: var(--bg-color);
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 8px;
+            position: relative;
+            text-align: right;
+        }
+
+        .detail-content h2, .detail-content h3 {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .detail-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .detail-info p {
+            font-size: 16px;
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .detail-info span {
+            font-weight: bold;
+            color: var(--main-text-color);
+            display: inline-block;
+            min-width: 120px;
+        }
+        
+        /* زر الإغلاق */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 30px;
+            color: #555;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+        
+        .detail-buttons button {
+            padding: 12px 25px;
+            background: var(--main-text-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .detail-buttons button:hover {
+            background: var(--accent-color);
+        }
+
+        /* ********* التجاوبية (للهواتف) ********* */
+        @media (max-width: 850px) {
+            .main-layout {
+                grid-template-columns: 1fr; 
+            }
+            .sidebar {
+                position: static; 
+                height: auto;
+                border-left: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px;
+            }
+            .products {
+                grid-template-columns: 1fr 1fr;
+            }
+            .detail-content {
+                margin: 20px 10px;
+            }
+        }
+        
+    </style>
 </head>
 
 <body>
 
     <header>
-        <h1>متجر المرج</h1>
-        <p>منصّة تجمع أفضل المتاجر في مكان واحد</p>
+        <h1 class="store-title" onclick="renderProducts(productsList)">منصة تجمع أفضل المتاجر في مكان واحد</h1>
     </header>
 
-    <section class="seller-info">
-        <h2>معلومات البائع</h2>
-        <div class="seller-card">
-            <h3>اسم المتجر: براند</h3>
-            <p><strong>صاحب المتجر:</strong> براند</p>
-            <p><strong>رقم التواصل:</strong> 0926066500</p>
-            <p><strong>الفئات:</strong> مكياج – عناية بالبشرة – عطور</p>
-            <p class="commission">عمولتك: 5%</p>
-        </div>
-    </section>
+    <div class="fixed-cart-button" onclick="toggleCart()">
+        🛒 <span id="item-count" class="cart-count">0</span>
+    </div>
 
-    <!-- المنتجات -->
-    <section class="products">
-        <h2>المنتجات</h2>
-        <div class="product-card">
-            <img src="https://via.placeholder.com/300x300?text=%D8%B9%D8%B7%D8%B1+%D9%82%D8%B5%D8%A9" alt="عطر قصة">
-            <h3>عطر قصة</h3>
-            <p class="price">السعر: 90 دينار</p>
-            <p class="desc">عطر إماراتي جميل، ثابت وفوّاح، يدوم لساعات طويلة.</p>
+    <div class="main-layout">
+        
+        <div class="sidebar">
+            
+            <input type="search" id="searchBox" placeholder="ابحث عن منتج أو سوق..." oninput="searchProducts()">
+            
+            <h4>تصنيفات المنتجات</h4>
+            <div class="sidebar-links">
+                <a href="#" onclick="renderProducts(productsList)">الكل</a>
+                <a href="#" onclick="filterCategory('clothes')">ملابس</a>
+                <a href="#" onclick="filterCategory('makeup')">مكياج</a>
+                <a href="#" onclick="filterCategory('accessories')">إكسسوارات</a>
+                <a href="#" onclick="filterCategory('perfumes')">عطور</a>
+                <a href="#" onclick="filterCategory('skincare')">عناية بالبشرة</a>
+            </div>
 
-            <a class="btn" href="https://wa.me/218926066500?text=مرحبا،%20نبي%20نطلب%20عطر%20قصة">اطلب الآن</a>
+            <h4>الأسواق والعلامات التجارية</h4>
+            <div class="sidebar-links">
+                <a href="#" onclick="filterBrand('Zara')">سوق زارا (Zara)</a>
+                <a href="#" onclick="filterBrand('Huda Beauty')">Huda Beauty</a>
+                <a href="#" onclick="filterBrand('Tiffany')">Tiffany</a>
+                <a href="#" onclick="filterBrand('Oud Al Saqar')">العود الصقر</a>
+                <a href="#" onclick="filterBrand('Local Seller A')">البائع المحلي (أ)</a>
+            </div>
+
         </div>
-    </section>
+
+        <div class="content-area">
+            <div class="products" id="products">
+                </div>
+        </div>
+
+    </div>
+    
+    <div id="product-detail-modal">
+        <div class="detail-content" id="detail-content">
+            </div>
+    </div>
+
+
+    <div class="cart-modal" id="cart-modal">
+        <h3>السلة <button onclick="toggleCart()" style="float: left; background: none; border: none; font-size: 20px; color: #333;">✖</button></h3>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <p>الإجمالي: <span id="total">0</span> د.ل</p>
+            <button onclick="showCheckout()">تأكيد الطلب</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="checkout-form" id="checkout-form">
+        <h3>بيانات الدفع</h3>
+        <input type="text" id="customer-name" placeholder="الاسم الكامل">
+        <input type="text" id="customer-phone" placeholder="رقم الهاتف">
+        <input type="text" id="customer-address" placeholder="العنوان">
+        <button onclick="placeOrder()">إرسال الطلب</button>
+        <button onclick="closeCheckout()" style="background: #999;">إغلاق</button>
+    </div>
+
+    <script>
+        const productsList = [
+            // *تنبيه: تم إضافة خاصيات جديدة للمنتجات*
+            { id:1, name:"فستان سهرة أنيق", price:99, category:"clothes", img:"https://via.placeholder.com/300x400/000000/ffffff?text=DRESS", brand:"Zara", sellerName:"متجر الموضة", sellerPhone:"0910000000", commission:5, description:"فستان سهرة نسائي من قماش الحرير، تصميم بسيط وأنيق ومناسب لجميع المناسبات." }, 
+            { id:2, name:"روج سائل ثابت", price:35, category:"makeup", img:"https://via.placeholder.com/300x400/FF1493/ffffff?text=ROUGE", brand:"Huda Beauty", sellerName:"مكياجي", sellerPhone:"0920000000", commission:7, description:"روج سائل بتركيبة ثابتة تدوم 24 ساعة، مقاوم للماء وبألوان عصرية." }, 
+            { id:3, name:"عطر قصة", price:90, category:"perfumes", img:"https://via.placeholder.com/300x400/333333/ffffff?text=PERFUME", brand:"Oud Al Saqar", sellerName:"العود الصقر", sellerPhone:"0940000000", commission:5, description:"عطر إماراتي جميل، ثابت وفوّاح، يدوم لساعات طويلة. فئة العطور: عطور - عناية بالبشرة." },
+            { id:4, name:"كريم مرطب يومي", price:65, category:"skincare", img:"https://via.placeholder.com/300x400/00bcd4/ffffff?text=CREAM", brand:"Local Seller A", sellerName:"بائع محلي (أ)", sellerPhone:"0919999999", commission:10, description:"كريم مرطب للبشرة الجافة والحساسة، يحتوي على فيتامين E وH. يستخدم صباحاً ومساءً." },
+            { id:5, name:"طقم فرش مكياج", price:120, category:"makeup", img:"https://via.placeholder.com/300x400/9c27b0/ffffff?text=BRUSHES", brand:"Morphe", sellerName:"مكياجي", sellerPhone:"0920000000", commission:7, description:"طقم فرش احترافية بـ 12 قطعة، مثالية لجميع أنواع المكياج." },
+            { id:6, name:"ساعة يد ذهبية", price:180, category:"accessories", img:"https://via.placeholder.com/300x400/F5A623/ffffff?text=WATCH", brand:"Tiffany", sellerName:"إكسسواراتي", sellerPhone:"0920101010", commission:5, description:"ساعة يد نسائية بتصميم كلاسيكي، مطلية بالذهب ومقاومة للماء." },
+        ];
+
+        let cart = [];
+
+        // *************** وظيفة عرض تفاصيل المنتج ***************
+        function showProductDetails(id) {
+            const product = productsList.find(p => p.id === id);
+            const modal = document.getElementById('product-detail-modal');
+            const content = document.getElementById('detail-content');
+
+            content.innerHTML = `
+                <button class="close-btn" onclick="closeProductDetails()">✖</button>
+                
+                <h2>${product.name}</h2>
+                <img src="${product.img}" alt="${product.name}">
+
+                <h3>معلومات البائع</h3>
+                <div class="detail-info">
+                    <p><span>اسم المتجر:</span> ${product.brand}</p>
+                    <p><span>صاحب المتجر:</span> ${product.sellerName}</p>
+                    <p><span>رقم التواصل:</span> <a href="tel:${product.sellerPhone}">${product.sellerPhone}</a></p>
+                    <p><span>الفئات:</span> ${product.category} - ${product.brand}</p>
+                    <p><span>عمولتك:</span> ${product.commission}%</p>
+                </div>
+
+                <h3>المنتجات والتفاصيل</h3>
+                <div class="detail-info">
+                    <p><span>السعر:</span> ${product.price} دينار</p>
+                    <p><span>الوصف:</span> ${product.description}</p>
+                </div>
+                
+                <div class="detail-buttons" style="margin-top: 30px;">
+                    <button onclick="addToCart(${product.id}); closeProductDetails();">أضف للسلة</button>
+                    <button style="background: var(--accent-color);">اطلب الآن</button>
+                </div>
+            `;
+            modal.style.display = 'block';
+        }
+
+        function closeProductDetails() {
+            document.getElementById('product-detail-modal').style.display = 'none';
+        }
+        // *************** نهاية وظيفة عرض تفاصيل المنتج ***************
+
+
+        function renderProducts(list) {
+            const listToRender = Array.isArray(list) ? list : productsList;
+
+            if (listToRender.length === 0) {
+                document.getElementById('products').innerHTML = '<p style="text-align:center; padding:50px; width:100%;">لا توجد منتجات مطابقة لعملية البحث أو الفلترة.</p>';
+                return;
+            }
+
+            document.getElementById('products').innerHTML = listToRender.map(p => `
+                <div class="product" onclick="showProductDetails(${p.id})">
+                    <img src="${p.img}" alt="${p.name}">
+                    <div class="product-details">
+                        <h3>${p.name}</h3>
+                        <small>السوق: ${p.brand}</small> 
+                        <p>${p.price} د.ل</p>
+                        <button onclick="event.stopPropagation(); addToCart(${p.id});">أضف للسلة</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id) {
+            const product = productsList.find(p => p.id === id);
+            cart.push(product);
+            renderCart();
+        }
+
+        function renderCart() {
+            document.getElementById('item-count').innerText = cart.length; 
+
+            document.getElementById('cart-items').innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <span>${item.name} (${item.price} د.ل)</span>
+                    <button onclick="removeItem(${index})">حذف</button>
+                </div>
+            `).join('');
+
+            const total = cart.reduce((sum, i) => sum + i.price, 0);
+            document.getElementById('total').innerText = total;
+        }
+
+        function removeItem(i) {
+            cart.splice(i, 1);
+            renderCart();
+        }
+
+        function filterCategory(cat) {
+            renderProducts(productsList.filter(p => p.category === cat));
+        }
+        
+        function filterBrand(brandName) {
+            renderProducts(productsList.filter(p => p.brand === brandName));
+        }
+
+        function searchProducts() {
+            const t = document.getElementById('searchBox').value.toLowerCase();
+            renderProducts(productsList.filter(p => 
+                p.name.toLowerCase().includes(t) || 
+                p.brand.toLowerCase().includes(t)
+            ));
+        }
+
+        function toggleCart() {
+            const cartModal = document.getElementById('cart-modal');
+            cartModal.classList.toggle('open');
+        }
+
+        function showCheckout() {
+            if (cart.length === 0) {
+                alert("السلة فارغة. يرجى إضافة منتجات قبل تأكيد الطلب.");
+                return;
+            }
+            toggleCart();
+            document.getElementById('overlay').style.display = "block";
+            document.getElementById('checkout-form').style.display = "block";
+        }
+
+        function closeCheckout() {
+            document.getElementById('overlay').style.display = "none";
+            document.getElementById('checkout-form').style.display = "none";
+        }
+
+        function placeOrder() {
+            const name = document.getElementById('customer-name').value;
+            const phone = document.getElementById('customer-phone').value;
+            if (!name || !phone) {
+                alert("الرجاء إدخال الاسم ورقم الهاتف لإتمام الطلب.");
+                return;
+            }
+
+            alert("تم استلام طلبك بنجاح! 🌸 سيتم التواصل معك قريباً.");
+
+            cart = [];
+            renderCart();
+            closeCheckout();
+        }
+
+        renderProducts(productsList);
+    </script>
 
 </body>
+
 </html>
