@@ -2,137 +2,174 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>متجر المرج الأنيق</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <style>
-        /* الألوان والتنسيق العام */
+    <title>متجر المرج Almarj store</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* ********* الألوان والمتغيرات ********* */
         :root {
-            --main-color: #000;
-            --accent-color: #FF1493; /* لون وردي حاد للتركيز */
+            --main-text-color: #000;
+            --accent-color: #FF1493; /* وردي فاقع للتركيز */
             --bg-color: #ffffff;
-            --light-grey: #e8e8e8; /* رمادي فاتح جديد للخطوط الفاصلة */
+            --sidebar-bg: #f9f9f9; /* خلفية رمادية فاتحة للقائمة الجانبية */
+            --border-color: #eee;
         }
 
         /* ********* التنسيقات الأساسية ********* */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Tahoma', 'Arial', sans-serif; /* اختيار خط نظيف وأنيق */
             margin: 0;
             padding: 0;
-            background: var(--bg-color);
+            background: #f7f7f7; /* خلفية خفيفة خارج منطقة المحتوى */
         }
 
-        /* ********* شريط الرأس ********* */
+        /* ********* شريط الرأس - التصميم الجديد ********* */
         header {
             background: var(--bg-color);
-            color: var(--main-color);
-            padding: 15px 20px;
-            font-size: 24px;
-            border-bottom: 1px solid var(--light-grey);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between;
+            justify-content: center; /* توسيط المحتوى */
             align-items: center;
+            padding: 15px 20px;
             position: sticky;
             top: 0;
             z-index: 100;
+            height: 60px; /* ارتفاع ثابت */
+        }
+        
+        /* تنسيق العنوان الأنيق في الوسط */
+        .store-title {
+            font-size: 28px;
+            font-weight: 900; /* خط ثقيل */
+            color: var(--main-text-color);
+            letter-spacing: 1px; /* تباعد بسيط بين الحروف */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05); /* ظل خفيف */
+            margin: 0;
+            padding: 0;
+            /* يتم توسيطه تلقائياً بواسطة justify-content: center في header */
         }
 
+        /* تنسيق زر السلة في الرأس (موقع أيقوني) */
         .cart-icon {
+            position: absolute; /* وضعه في زاوية معينة */
+            left: 20px; 
+            top: 50%;
+            transform: translateY(-50%);
             background: none;
             border: none;
             font-size: 24px;
             cursor: pointer;
-            position: relative;
+            z-index: 101;
         }
 
         .cart-count {
             position: absolute;
-            top: -8px; /* تم تعديله ليكون أكثر دقة */
-            right: -8px; /* تم تعديله ليكون أكثر دقة */
+            top: -5px;
+            right: -5px;
             background: var(--accent-color);
             color: white;
             border-radius: 50%;
-            padding: 3px 7px;
+            padding: 2px 6px;
             font-size: 11px;
             line-height: 1;
             font-weight: bold;
         }
 
-        /* ********* شريط التنقل ********* */
-        nav {
+        /* ********* هيكل الصفحة الرئيسي (Sidebar + Content) ********* */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr; /* عمود ثابت (250px) للجانب، وعمود مرن للمحتوى */
+            max-width: 1400px;
+            margin: 0 auto;
             background: var(--bg-color);
-            padding: 10px 20px;
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            flex-wrap: wrap;
-            border-bottom: 1px solid var(--light-grey);
-            overflow-x: auto; /* يسمح بالتمرير الأفقي إذا كثرت الروابط */
+            min-height: 100vh;
+            padding-top: 1px; /* لحل مشكلة margin collapse */
+        }
+        
+        /* ********* القائمة الجانبية (Sidebar) ********* */
+        .sidebar {
+            background: var(--sidebar-bg);
+            padding: 20px 15px;
+            border-left: 1px solid var(--border-color);
         }
 
-        nav a {
-            color: var(--main-color);
+        .sidebar h4 {
+            font-size: 18px;
+            color: var(--main-text-color);
+            margin-top: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid var(--accent-color); /* خط وردي تحت العنوان */
+        }
+
+        .sidebar-links a {
+            display: block;
+            color: #555;
             text-decoration: none;
-            font-size: 16px;
-            padding: 5px 0;
-            white-space: nowrap; /* يمنع كسر النص إلى سطر جديد */
-            border-bottom: 2px solid transparent;
+            padding: 8px 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
         }
 
-        nav a:hover {
-            color: var(--accent-color); /* تغيير لون النص عند المرور */
-            border-bottom: 2px solid var(--accent-color);
+        .sidebar-links a:hover {
+            background: var(--accent-color);
+            color: white;
+            font-weight: bold;
         }
-
-        nav input[type="search"] {
-            padding: 8px 15px;
+        
+        .sidebar input[type="search"] {
+            width: 100%;
+            padding: 10px;
             font-size: 14px;
             border-radius: 20px;
             border: 1px solid #ddd;
-            width: 250px;
-            margin-right: auto;
+            margin-bottom: 10px;
+            box-sizing: border-box;
             text-align: right;
         }
-        
-        /* ********* منطقة المنتجات (GRID-Like) ********* */
-        .products {
-            display: grid; /* استخدام grid لترتيب احترافي */
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* 3-4 أعمدة على الأقل */
-            gap: 20px;
+
+        /* ********* منطقة المحتوى الرئيسية ********* */
+        .content-area {
             padding: 20px;
-            max-width: 1200px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
             margin: 0 auto;
         }
 
-        /* ********* بطاقة المنتج ********* */
+        /* ********* بطاقة المنتج (أنيقة وواضحة) ********* */
         .product {
             background: var(--bg-color);
-            border: 1px solid #eee; /* إضافة حد خفيف جداً */
+            border: none; 
             padding: 0;
-            border-radius: 4px; /* إضافة حواف مدورة خفيفة */
+            border-radius: 6px;
             text-align: right;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* ظل خفيف لتحسين الوضوح */
-            transition: box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* ظل واضح وأنيق */
+            transition: transform 0.3s;
         }
         
         .product:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-5px); /* تأثير رفع خفيف عند المرور */
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
 
         .product img {
             width: 100%;
-            height: auto;
+            height: 280px; /* ارتفاع ثابت للصور للحفاظ على التناسق */
+            object-fit: cover; /* لضمان ملء الصورة للحجم دون تشوه */
             display: block;
-            transition: transform 0.3s;
         }
 
-        .product img:hover {
-            transform: scale(1.03);
+        .product-details {
+            padding: 10px 15px;
         }
 
         .product h3 {
-            font-size: 16px;
-            margin: 10px 0 5px;
-            padding: 0 10px;
+            font-size: 15px;
+            margin: 5px 0 0;
             font-weight: bold;
             color: #333;
         }
@@ -140,27 +177,25 @@
         .product small {
             display: block;
             color: #999;
-            font-size: 13px;
-            padding: 0 10px 5px;
+            font-size: 12px;
+            margin-bottom: 5px;
         }
 
         .product p {
-            margin: 0 0 10px;
             font-size: 18px;
             font-weight: bold;
-            padding: 0 10px;
-            color: var(--main-color);
+            color: var(--accent-color); /* السعر باللون الوردي */
         }
 
         .product button {
             padding: 10px;
-            background: var(--main-color);
+            background: var(--main-text-color);
             color: var(--bg-color);
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            width: calc(100% - 20px);
-            margin: 0 10px 10px;
+            width: 100%;
+            margin-top: 5px;
             transition: background 0.2s;
         }
 
@@ -168,10 +203,9 @@
             background: var(--accent-color);
         }
 
-        /* ********* السلة المنبثقة ********* */
+        /* ********* السلة والنماذج ********* */
         .cart-modal {
-            position: fixed; top: 0; 
-            left: auto; right: -320px; /* تم تصحيح الاتجاه لـ RTL */
+            position: fixed; top: 0; right: -320px;
             width: 300px; height: 100%;
             background: #fff;
             box-shadow: -2px 0 5px rgba(0,0,0,0.2);
@@ -182,36 +216,27 @@
             overflow-y: auto;
         }
 
-        .cart-modal.open {
-            right: 0; /* فتح السلة */
-        }
-        
-        /* ********* تنسيق الدفع ********* */
+        .cart-modal.open { right: 0; }
+        .cart-modal h3 { border-bottom: 2px solid var(--accent-color); }
+        .cart-item { border-bottom:1px solid #eee; padding:10px 0; }
+        .cart-item button { background: var(--accent-color); }
+
         .checkout-form button {
             background: var(--accent-color) !important;
         }
         
-        /* ********* تنسيقات الهواتف (للتجاوبية) ********* */
-        @media (max-width: 600px) {
+        /* ********* التجاوبية (للهواتف) ********* */
+        @media (max-width: 850px) {
+            .main-layout {
+                grid-template-columns: 1fr; /* عمود واحد: القائمة الجانبية تظهر في الأعلى */
+            }
+            .sidebar {
+                border-left: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 15px;
+            }
             .products {
-                grid-template-columns: 1fr 1fr; /* عرض منتجين في الصف على الهاتف */
-                gap: 15px;
-                padding: 10px;
-            }
-            .product {
-                width: 100%;
-            }
-            header {
-                font-size: 20px;
-                padding: 10px 15px;
-            }
-            nav input[type="search"] {
-                width: 100%;
-                margin: 5px 0 10px;
-            }
-            /* إخفاء بعض الروابط إذا كانت كثيرة جداً لتفادي الفوضى */
-            nav a:nth-child(n+6) { 
-                 display: none; 
+                grid-template-columns: 1fr 1fr; /* منتجان في الصف على الهاتف */
             }
         }
         
@@ -221,26 +246,42 @@
 <body>
 
     <header>
-        متجر المــرج
+        <h1 class="store-title">متجر المرج Almarj store</h1>
         <button class="cart-icon" onclick="toggleCart()">
             🛒 <span id="item-count" class="cart-count">0</span>
         </button>
     </header>
 
-    <nav>
-        <a href="#" onclick="renderProducts(productsList)">الكل 🛍️</a>
-        <a href="#" onclick="filterCategory('clothes')">ملابس</a>
-        <a href="#" onclick="filterCategory('makeup')">مكياج</a>
-        <a href="#" onclick="filterCategory('accessories')">إكسسوارات</a>
+    <div class="main-layout">
         
-        <a href="#" onclick="filterBrand('Zara')">Zara</a>
-        <a href="#" onclick="filterBrand('Huda Beauty')">Huda Beauty</a>
+        <div class="sidebar">
+            
+            <input type="search" id="searchBox" placeholder="ابحث عن منتج أو سوق..." oninput="searchProducts()">
+            
+            <h4>تصنيفات المنتجات</h4>
+            <div class="sidebar-links">
+                <a href="#" onclick="renderProducts(productsList)">الكل</a>
+                <a href="#" onclick="filterCategory('clothes')">ملابس</a>
+                <a href="#" onclick="filterCategory('makeup')">مكياج</a>
+                <a href="#" onclick="filterCategory('accessories')">إكسسوارات</a>
+            </div>
 
+            <h4>الأسواق والعلامات التجارية</h4>
+            <div class="sidebar-links">
+                <a href="#" onclick="filterBrand('Zara')">سوق زارا (Zara)</a>
+                <a href="#" onclick="filterBrand('Huda Beauty')">Huda Beauty</a>
+                <a href="#" onclick="filterBrand('Tiffany')">Tiffany</a>
+                <a href="#" onclick="filterBrand('Nike')">Nike</a>
+            </div>
 
-        <input type="search" id="searchBox" placeholder="ابحث عن منتج أو ماركة..." oninput="searchProducts()">
-    </nav>
+        </div>
 
-    <div class="products" id="products"></div>
+        <div class="content-area">
+            <div class="products" id="products">
+                </div>
+        </div>
+
+    </div>
 
     <div class="cart-modal" id="cart-modal">
         <h3>السلة <button onclick="toggleCart()" style="float: left; background: none; border: none; font-size: 20px; color: #333;">✖</button></h3>
@@ -263,8 +304,8 @@
 
     <script>
         const productsList = [
-            // *تنبيه: يجب استبدال "رابط_صورة_المنتج" بالروابط الفعلية لصورك*
-            { id:1, name:"فستان أحمر جذاب", price:99, category:"clothes", img:"https://via.placeholder.com/300x400/000000/ffffff?text=FAD", brand:"Zara" }, 
+            // *تنبيه: يجب استبدال الروابط الوهمية بروابط صورك الفعلية*
+            { id:1, name:"فستان سهرة أنيق", price:99, category:"clothes", img:"https://via.placeholder.com/300x400/000000/ffffff?text=FAD", brand:"Zara" }, 
             { id:2, name:"روج سائل ثابت", price:35, category:"makeup", img:"https://via.placeholder.com/300x400/FF1493/ffffff?text=ROUGE", brand:"Huda Beauty" }, 
             { id:3, name:"إسوارة طبقات ذهبية", price:50, category:"accessories", img:"https://via.placeholder.com/300x400/333333/ffffff?text=ACC", brand:"Tiffany" },
             { id:4, name:"بلوزة بياقة أنيقة", price:65, category:"clothes", img:"https://via.placeholder.com/300x400/4caf50/ffffff?text=BLOUSE", brand:"Zara" },
@@ -285,10 +326,12 @@
             document.getElementById('products').innerHTML = listToRender.map(p => `
                 <div class="product">
                     <img src="${p.img}" alt="${p.name}">
-                    <h3>${p.name}</h3>
-                    <small>العلامة التجارية: ${p.brand}</small> 
-                    <p>${p.price} د.ل</p>
-                    <button onclick="addToCart(${p.id})">أضف للسلة</button>
+                    <div class="product-details">
+                        <h3>${p.name}</h3>
+                        <small>السوق: ${p.brand}</small> 
+                        <p>${p.price} د.ل</p>
+                        <button onclick="addToCart(${p.id})">أضف للسلة</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -300,6 +343,8 @@
         }
 
         function renderCart() {
+            document.getElementById('item-count').innerText = cart.length; 
+
             document.getElementById('cart-items').innerHTML = cart.map((item, index) => `
                 <div class="cart-item">
                     <span>${item.name} (${item.price} د.ل)</span>
@@ -309,7 +354,6 @@
 
             const total = cart.reduce((sum, i) => sum + i.price, 0);
             document.getElementById('total').innerText = total;
-            document.getElementById('item-count').innerText = cart.length;
         }
 
         function removeItem(i) {
@@ -318,14 +362,13 @@
         }
 
         function filterCategory(cat) {
-            if (cat === 'all') {
-                renderProducts(productsList);
-            } else {
-                renderProducts(productsList.filter(p => p.category === cat));
-            }
+            renderProducts(productsList.filter(p => p.category === cat));
         }
         
         function filterBrand(brandName) {
+            // ***************
+            // دالة الفلترة على "الأسواق"
+            // ***************
             renderProducts(productsList.filter(p => p.brand === brandName));
         }
 
