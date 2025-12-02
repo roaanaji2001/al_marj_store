@@ -4,32 +4,154 @@
   <meta charset="UTF-8">
   <title>متجر المرج</title>
   <style>
-    body { font-family: 'Arial', sans-serif; margin:0; padding:0; background:#f7f7f7; }
-    header { background:#222; color:#fff; padding:20px; text-align:center; font-size:22px; }
-    nav { background:#333; padding:10px; color:#fff; display:flex; gap:15px; align-items:center; flex-wrap:wrap; }
-    nav a { color:#fff; text-decoration:none; font-size:17px; padding:5px 10px; border-radius:4px; }
-    nav a:hover { background:#555; }
-    nav input[type="search"] { padding:7px; font-size:16px; border-radius:4px; border:none; width:200px; }
-    .products { display:flex; flex-wrap:wrap; gap:20px; padding:20px; justify-content:center; }
-    .product { background:#fff; border:1px solid #ddd; width:220px; padding:10px; border-radius:6px; text-align:center; }
-    .product img { width:100%; border-radius:4px; }
-    .product h3 { font-size:18px; margin:8px 0; }
-    .product p { margin:5px 0; font-size:16px; }
-    .product button { padding:7px 10px; background:#1e88e5; color:#fff; border:none; border-radius:4px; cursor:pointer; }
-    .product button:hover { background:#0d6cd4; }
-
-    .cart {
-      position:fixed; top:20px; left:20px;
-      background:#fff; border:1px solid #ccc;
-      padding:15px; border-radius:6px;
-      width:260px; max-height:80vh; overflow-y:auto;
+    /* الألوان والتنسيق العام المستوحى من Shein */
+    :root {
+      --main-color: #000; /* الأسود هو الأساس */
+      --accent-color: #FF1493; /* وردي فاقع للخصومات/الأزرار الرئيسية */
+      --bg-color: #ffffff; /* الخلفية بيضاء ناصعة */
+      --light-grey: #f5f5f5;
     }
-    .cart-item { border-bottom:1px solid #eee; padding:6px 0; font-size:15px; }
-    .cart-item button { float:left; background:red; color:#fff; border:none; padding:2px 7px; }
+    
+    body { font-family: 'Arial', sans-serif; margin:0; padding:0; background: var(--bg-color); }
+    
+    /* شريط الرأس - بسيط وفعال */
+    header { 
+      background: var(--bg-color); 
+      color: var(--main-color); 
+      padding: 15px 20px; 
+      text-align: right; 
+      font-size: 24px; 
+      border-bottom: 1px solid var(--light-grey); 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky; /* لجعل الشريط ثابتاً */
+      top: 0;
+      z-index: 100;
+    }
+    /* تنسيق زر السلة في الرأس */
+    .cart-icon {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        position: relative;
+    }
+    .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: var(--accent-color);
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        line-height: 1;
+    }
+
+    /* شريط التنقل - نظيف وبسيط */
+    nav { 
+      background: var(--bg-color); 
+      padding: 10px 20px; 
+      display:flex; 
+      gap:15px; 
+      align-items:center; 
+      flex-wrap:wrap;
+      border-bottom: 1px solid var(--light-grey);
+    }
+    nav a { 
+      color: var(--main-color); 
+      text-decoration:none; 
+      font-size:16px; 
+      padding:5px 0;
+      border-bottom: 2px solid transparent;
+    }
+    nav a:hover { 
+      border-bottom: 2px solid var(--accent-color); 
+    }
+    nav input[type="search"] { 
+      padding:7px; 
+      font-size:14px; 
+      border-radius: 20px; 
+      border:1px solid #ddd; 
+      width:250px; 
+      margin-right: auto;
+    }
+
+    .products { display:flex; flex-wrap:wrap; gap:20px; padding:20px; justify-content:center; }
+    
+    /* بطاقة المنتج - بسيطة وعصرية */
+    .product { 
+      background: var(--bg-color); 
+      border:none; 
+      width:240px; 
+      padding:0;
+      border-radius:0; 
+      text-align:right; 
+      overflow: hidden;
+    }
+    .product img { 
+      width:100%; 
+      border-radius: 0; 
+      transition: transform 0.3s;
+    }
+    .product img:hover {
+        transform: scale(1.05);
+    }
+    .product h3 { 
+      font-size:15px; 
+      margin:10px 0 5px; 
+      padding: 0 10px;
+      font-weight: normal;
+    }
+    .product p { 
+      margin:0 0 10px; 
+      font-size:18px; 
+      font-weight: bold;
+      padding: 0 10px;
+      color: var(--main-color);
+    }
+    .product button { 
+      padding:7px 10px; 
+      background: var(--main-color); 
+      color: var(--bg-color); 
+      border:none; 
+      border-radius:4px; 
+      cursor:pointer; 
+      width: calc(100% - 20px);
+      margin: 0 10px 10px;
+    }
+    .product button:hover { 
+      background: var(--accent-color); 
+    }
+
+    /* السلة - تم تحويلها إلى قائمة منبثقة/جانبية */
+    .cart {
+      display: none; /* إخفاء السلة الجانبية الثابتة */
+    }
+    /* تصميم النافذة المنبثقة للسلة */
+    .cart-modal {
+        position: fixed; top: 0; right: -320px;
+        width: 300px; height: 100%;
+        background: #fff;
+        box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+        z-index: 200;
+        transition: right 0.3s;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .cart-modal.open {
+        right: 0;
+    }
+    .cart-modal h3 { border-bottom: 2px solid var(--accent-color); padding-bottom: 10px; }
+    .cart-item { border-bottom:1px solid #eee; padding:10px 0; font-size:15px; display: flex; justify-content: space-between; align-items: center;}
+    .cart-item button { background: var(--accent-color); color:#fff; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; }
+    .cart-footer { margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; }
+
 
     .overlay {
       display:none; position:fixed; top:0; left:0;
-      width:100%; height:100%; background:rgba(0,0,0,0.6);
+      width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:40;
     }
     .checkout-form {
       display:none; position:fixed; top:50%; left:50%;
@@ -37,31 +159,38 @@
       background:#fff; padding:20px; border-radius:6px;
       width:300px; z-index:50;
     }
-    .checkout-form input { width:100%; padding:8px; margin:6px 0; }
-    .checkout-form button { padding:10px; width:100%; margin-top:8px; }
+    .checkout-form input { width:100%; padding:8px; margin:6px 0; box-sizing: border-box; }
+    .checkout-form button { padding:10px; width:100%; margin-top:8px; background: var(--main-color); color: white;}
   </style>
 </head>
 
 <body>
 
-<header>متجر المــرج</header>
+<header>
+    متجر المــرج
+    <button class="cart-icon" onclick="toggleCart()">
+        🛒 <span id="item-count" class="cart-count">0</span>
+    </button>
+</header>
 
 <nav>
-    <a href="#" onclick="renderProducts(productsList)">الكل 🛒</a>
-  <a href="#" onclick="filterCategory('clothes')">ملابس 🛍️</a>
-  <a href="#" onclick="filterCategory('makeup')">مكياج 💄</a>
-  <a href="#" onclick="filterCategory('accessories')">إكسسوارات 💍</a>
+    <a href="#" onclick="filterCategory('all')">الكل 🛍️</a>
+    <a href="#" onclick="filterCategory('clothes')">ملابس</a>
+    <a href="#" onclick="filterCategory('makeup')">مكياج</a>
+    <a href="#" onclick="filterCategory('accessories')">إكسسوارات</a>
 
-  <input type="search" id="searchBox" placeholder="ابحث…" oninput="searchProducts()">
+    <input type="search" id="searchBox" placeholder="ابحث عن منتج..." oninput="searchProducts()">
 </nav>
 
 <div class="products" id="products"></div>
 
-<div class="cart" id="cart">
-  <h3>السلة</h3>
+<div class="cart-modal" id="cart-modal">
+  <h3>السلة <button onclick="toggleCart()" style="float: left; background: none; border: none; font-size: 20px; color: #333;">✖</button></h3>
   <div id="cart-items"></div>
-  <p>الإجمالي: <span id="total">0</span> د.ل</p>
-  <button onclick="showCheckout()">تأكيد الطلب</button>
+  <div class="cart-footer">
+    <p>الإجمالي: <span id="total">0</span> د.ل</p>
+    <button onclick="showCheckout()">تأكيد الطلب</button>
+  </div>
 </div>
 
 <div class="overlay" id="overlay"></div>
@@ -71,27 +200,33 @@
   <input type="text" id="customer-phone" placeholder="رقم الهاتف">
   <input type="text" id="customer-address" placeholder="العنوان">
   <button onclick="placeOrder()">إرسال الطلب</button>
-  <button onclick="closeCheckout()">إغلاق</button>
+  <button onclick="closeCheckout()" style="background: #999;">إغلاق</button>
 </div>
 
 <script>
   const productsList = [
-    { id:1, name:"فستان أحمر", price:20, category:"clothes", img:"https://via.placeholder.com/300/e91e63/ffffff?text=FAD"}, // ألوان وردية
-    { id:2, name:"روج ثابت", price:10, category:"makeup", img:"https://via.placeholder.com/300/ff9800/ffffff?text=ROUGE"}, // ألوان برتقالية
-    { id:3, name:"إسوارة ذهبية", price:15, category:"accessories", img:"https://via.placeholder.com/300/00bcd4/ffffff?text=ACC"}, // ألوان سماوية
-    // تم إضافة منتجات جديدة هنا
-    { id:4, name:"بلوزة صيفية", price:25, category:"clothes", img:"https://via.placeholder.com/300/4caf50/ffffff?text=BLOUSE"},
-    { id:5, name:"طقم فرش مكياج", price:30, category:"makeup", img:"https://via.placeholder.com/300/9c27b0/ffffff?text=BRUSHES"},
+    { id:1, name:"فستان أحمر جذاب", price:99, category:"clothes", img:"https://via.placeholder.com/300/000000/ffffff?text=FAD" },
+    { id:2, name:"روج سائل ثابت", price:35, category:"makeup", img:"https://via.placeholder.com/300/FF1493/ffffff?text=ROUGE" },
+    { id:3, name:"إسوارة طبقات ذهبية", price:50, category:"accessories", img:"https://via.placeholder.com/300/333333/ffffff?text=ACC" },
+    { id:4, name:"بلوزة بياقة أنيقة", price:65, category:"clothes", img:"https://via.placeholder.com/300/4caf50/ffffff?text=BLOUSE" },
+    { id:5, name:"طقم فرش مكياج أساسية", price:120, category:"makeup", img:"https://via.placeholder.com/300/9c27b0/ffffff?text=BRUSHES" },
   ];
 
   let cart = [];
 
   function renderProducts(list) {
-    document.getElementById('products').innerHTML = list.map(p=>`
+    const listToRender = list === 'all' ? productsList : list;
+
+    if (listToRender.length === 0) {
+      document.getElementById('products').innerHTML = '<p style="text-align:center; padding:50px; width:100%;">لا توجد منتجات مطابقة لعملية البحث أو الفلترة.</p>';
+      return;
+    }
+    
+    document.getElementById('products').innerHTML = listToRender.map(p=>`
       <div class="product">
-        <img src="${p.img}">
+        <img src="${p.img}" alt="${p.name}">
         <h3>${p.name}</h3>
-        <p>السعر: ${p.price} د.ل</p>
+        <p>${p.price} د.ل</p>
         <button onclick="addToCart(${p.id})">أضف للسلة</button>
       </div>
     `).join('');
@@ -106,13 +241,14 @@
   function renderCart() {
     document.getElementById('cart-items').innerHTML = cart.map((item, index)=>`
       <div class="cart-item">
-        ${item.name} — ${item.price} د.ل
-        <button onclick="removeItem(${index})">x</button>
+        <span>${item.name} (${item.price} د.ل)</span>
+        <button onclick="removeItem(${index})">حذف</button>
       </div>
     `).join('');
 
     const total = cart.reduce((sum,i)=> sum + i.price, 0);
     document.getElementById('total').innerText = total;
+    document.getElementById('item-count').innerText = cart.length; /* تحديث عدد العناصر */
   }
 
   function removeItem(i) {
@@ -121,19 +257,30 @@
   }
 
   function filterCategory(cat) {
-    renderProducts(productsList.filter(p => p.category === cat));
+    if (cat === 'all') {
+        renderProducts(productsList);
+    } else {
+        renderProducts(productsList.filter(p => p.category === cat));
+    }
   }
 
   function searchProducts() {
-    const t = document.getElementById('searchBox').value;
-    renderProducts(productsList.filter(p=> p.name.includes(t)));
+    const t = document.getElementById('searchBox').value.toLowerCase();
+    renderProducts(productsList.filter(p=> p.name.toLowerCase().includes(t)));
   }
+    
+    // دالة لفتح/إغلاق السلة المنبثقة
+    function toggleCart() {
+        const cartModal = document.getElementById('cart-modal');
+        cartModal.classList.toggle('open');
+    }
 
   function showCheckout() {
     if (cart.length === 0) {
-      alert("السلة فارغة، لا يمكن تأكيد الطلب.");
+      alert("السلة فارغة. يرجى إضافة منتجات قبل تأكيد الطلب.");
       return;
     }
+    toggleCart(); // إغلاق السلة الجانبية
     document.getElementById('overlay').style.display="block";
     document.getElementById('checkout-form').style.display="block";
   }
@@ -147,11 +294,8 @@
     const phone = document.getElementById('customer-phone').value;
     if(!name || !phone){ alert("الرجاء إدخال الاسم ورقم الهاتف لإتمام الطلب."); return; }
     
-    // هنا يمكن إرسال بيانات الطلب والسلة إلى الخادم 
+    alert("تم استلام طلبك بنجاح! 🌸 سيتم التواصل معك قريباً.");
     
-    alert("تم استلام طلبك بنجاح! 🌸 سيتم التواصل معك على رقم " + phone);
-    
-    // تفريغ السلة بعد الطلب
     cart = [];
     renderCart();
     closeCheckout();
